@@ -13,6 +13,7 @@ package com.example.android.coffeeorderingapp;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.text.NumberFormat;
@@ -35,7 +36,17 @@ public class MainActivity extends AppCompatActivity {
      */
     public void submitOrder(View view) {
         int price = getPrice();
-        String message = "Quantity: "+quantity+"\n"+"Total: $" + (price)+"\n"+"Thank you!!";
+        String message = "Quantity: "+quantity;
+        message +="\nTotal: $" + (price);
+        CheckBox ch = (CheckBox) findViewById(R.id.whippedCream);
+        if(ch.isChecked()) {
+            message += "\nWhipped Cream topping added.";
+        }
+        ch = (CheckBox) findViewById(R.id.Chocolate);
+        if(ch.isChecked()) {
+            message += "\nChocolate topping Added.";
+        }
+        message += "\nThank you!!";
         displayMessage(message);
     }
 
@@ -75,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayMessage(String msg) {
         TextView quantityTextView = (TextView) findViewById(R.id.order_summary);
+        msg+="\n";
         quantityTextView.setText(msg);
     }
 
