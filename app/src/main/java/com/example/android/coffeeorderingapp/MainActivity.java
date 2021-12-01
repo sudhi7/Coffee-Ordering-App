@@ -10,10 +10,13 @@ package com.example.android.coffeeorderingapp;
 
 
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.text.NumberFormat;
@@ -36,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public void submitOrder(View view) {
         int price = getPrice();
-        String message = "Quantity: "+quantity;
+        String message = "Name: " + getName();
+        message += "\nQuantity: "+quantity;
         message +="\nTotal: $" + (price);
         CheckBox ch = (CheckBox) findViewById(R.id.whippedCream);
         if(ch.isChecked()) {
@@ -47,11 +51,33 @@ public class MainActivity extends AppCompatActivity {
             message += "\nChocolate topping Added.";
         }
         message += "\nThank you!!";
-        displayMessage(message);
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        String subject;
+        subject="JustJava Order for " + getName();
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    private String getName() {
+        EditText ob = (EditText) findViewById(R.id.name);
+        return ob.getText().toString();
     }
 
     private int getPrice() {
-        return quantity*5;
+        int cost=5;
+        CheckBox ch = (CheckBox) findViewById(R.id.whippedCream);
+        if(ch.isChecked()) {
+            cost += 1;
+        }
+        ch = (CheckBox) findViewById(R.id.Chocolate);
+        if(ch.isChecked()) {
+            cost += 2;
+        }
+        return quantity*cost;
     }
 
     public void incrementQuantity(View view) {
@@ -82,12 +108,6 @@ public class MainActivity extends AppCompatActivity {
     private void display(int number) {
         TextView quantityTextView = (TextView) findViewById(R.id.quantity_text_view);
         quantityTextView.setText("" + number);
-    }
-
-    private void displayMessage(String msg) {
-        TextView quantityTextView = (TextView) findViewById(R.id.order_summary);
-        msg+="\n";
-        quantityTextView.setText(msg);
     }
 
     private void displayPrice(int number) {
